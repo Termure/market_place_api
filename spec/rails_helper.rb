@@ -5,7 +5,7 @@ require_relative '../config/environment'
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'rspec/rails'
 require 'support/factory_bot'
-require 'database_cleaner'
+require 'shoulda/matchers'
 
 begin
   ActiveRecord::Migration.maintain_test_schema!
@@ -14,6 +14,8 @@ rescue ActiveRecord::PendingMigrationError => e
   exit 1
 end
 RSpec.configure do |config|
+  config.include(Shoulda::Matchers::ActiveModel, type: :model)
+  config.include(Shoulda::Matchers::ActiveRecord, type: :model)
   config.use_transactional_fixtures = false
   config.before(:suite) do
     DatabaseCleaner.clean_with(:truncation)
