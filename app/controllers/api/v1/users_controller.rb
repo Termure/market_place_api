@@ -1,4 +1,5 @@
 class Api::V1::UsersController < ApplicationController
+  rescue_from ActiveRecord::RecordNotFound, with: :render_404
 
   # GET /users/1
   def show
@@ -19,5 +20,9 @@ class Api::V1::UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:email, :password)
+  end
+
+  def render_404
+    render json: 'Not found', status: :not_found
   end
 end
