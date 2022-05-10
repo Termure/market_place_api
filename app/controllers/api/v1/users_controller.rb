@@ -1,5 +1,6 @@
 class Api::V1::UsersController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :render_404
+  rescue_from ActiveRecord::RecordInvalid,  with: :render_422
 
   # GET /users/1
   def show
@@ -9,11 +10,7 @@ class Api::V1::UsersController < ApplicationController
   # POST /users/1
   def create
     @user = User.new(user_params)
-    if @user.save
-      render json: @user, status: :created
-    else
-      render json: @user.errors, status: :unprocessable_entity
-    end
+    render_201 if @user.save!
   end
 
   private
@@ -24,5 +21,13 @@ class Api::V1::UsersController < ApplicationController
 
   def render_404
     render json: 'Not found', status: :not_found
+  end
+
+  def render_422
+    render json: @user.errors, status: :unprocessable_entity
+  end
+
+  def render_201
+    render json: @user, status: :created
   end
 end
