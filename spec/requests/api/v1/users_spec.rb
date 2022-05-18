@@ -2,9 +2,18 @@ require 'rails_helper'
 
 RSpec.describe "Api::V1::Users", type: :request do
   describe "CRUD" do
-    context 'GET user' do
-      let(:user) { create :user}
+    let(:user) { create :user}
 
+    let!(:user_params) do
+      {
+        user: {
+          email: Faker::Internet.email,
+          password: Faker::Internet.password
+        }
+      }
+    end
+
+    context 'GET user' do
       before do
         get "/api/v1/users/#{user.id}", as: :json # or get api_v1_user_url(user)
       end
@@ -28,15 +37,6 @@ RSpec.describe "Api::V1::Users", type: :request do
     context 'POST user' do
       let(:create_user) { post '/api/v1/users', params: user_params }
 
-      let!(:user_params) do
-        {
-          user: {
-            email: Faker::Internet.email,
-            password: Faker::Internet.password
-          }
-        }
-      end
-
       it 'creates a new user' do
         expect { create_user }.to change(User, :count).by(+1)
         expect(response).to have_http_status(:success)
@@ -47,6 +47,20 @@ RSpec.describe "Api::V1::Users", type: :request do
       it 'does not creates user with taken email' do
         create_user
         expect { post api_v1_users_url, params: user_params }.to_not change(User, :count)
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+
+    context 'UPDATE user' do
+      it 'updates user' do
+        patch api_v1_user_url(user), params: user_params
+        expect(response).to have_http_status(:success)
+        expect(User.find(user.id).email).to eql(user_params[:user][:email])
+      end
+
+      it 'does not update user when invalid params are sent' do
+        user_params[:user][:email] = 'invalid.email'
+        patch api_v1_user_url(user), params: user_params
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
