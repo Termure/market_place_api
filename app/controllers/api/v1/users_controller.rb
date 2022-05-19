@@ -1,7 +1,7 @@
 class Api::V1::UsersController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :render_404
   rescue_from ActiveRecord::RecordInvalid,  with: :render_422
-  before_action :set_user, only: %i(show update)
+  before_action :set_user, only: %i(show update destroy)
 
     # GET /users/1
   def show
@@ -20,6 +20,11 @@ class Api::V1::UsersController < ApplicationController
     else
       render_422
     end
+  end
+
+  def destroy
+    @user.destroy
+    head 204
   end
 
   private
