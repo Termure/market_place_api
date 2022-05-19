@@ -64,5 +64,15 @@ RSpec.describe "Api::V1::Users", type: :request do
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
+
+    context 'DELETE the user' do
+      it 'deletes the user' do
+        user = create :user
+        expect do
+          delete api_v1_user_url(user)
+          expect(response).to have_http_status(:no_content)
+        end.to change(User, :count).by(-1)
+      end
+    end
   end
 end
