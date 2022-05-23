@@ -27,6 +27,7 @@ RSpec.describe "Api::V1::Tokens", type: :request do
         user_parms[:user][:email] = 'test.email'
         post api_v1_tokens_url, params: user_parms
         expect(response).to have_http_status(:unauthorized)
+        expect(json_response['token']).to be_nil
       end
     end
   end
