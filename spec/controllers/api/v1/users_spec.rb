@@ -53,25 +53,38 @@ RSpec.describe "Api::V1::Users", type: :request do
 
     context 'UPDATE user' do
       it 'updates user' do
-        patch api_v1_user_url(user), params: user_params
+        patch api_v1_user_url(user), params: user_params, headers: { Authorization: JsonWebToken.encode(user_id: user.id)}
         expect(response).to have_http_status(:success)
         expect(User.find(user.id).email).to eql(user_params[:user][:email])
       end
 
       it 'does not update user when invalid params are sent' do
         user_params[:user][:email] = 'invalid.email'
-        patch api_v1_user_url(user), params: user_params
+        patch api_v1_user_url(user), params: user_params, headers: { Authorization: JsonWebToken.encode(user_id: user.id) }
         expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'should forbid update user' do
+        patch api_v1_user_url(user), params: user_params
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
     context 'DELETE the user' do
+      let!(:user) { user = create :user }
+
       it 'deletes the user' do
-        user = create :user
         expect do
-          delete api_v1_user_url(user)
+          delete api_v1_user_url(user), headers: { Authorization: JsonWebToken.encode(user_id: user.id) }
           expect(response).to have_http_status(:no_content)
         end.to change(User, :count).by(-1)
+      end
+
+      it 'should forbid destroy user' do
+        expect do
+          delete api_v1_user_url(user)
+          expect(response).to have_http_status(:forbidden)
+        end.to change(User, :count).by(0)
       end
     end
   end
