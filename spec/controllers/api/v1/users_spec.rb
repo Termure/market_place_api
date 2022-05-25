@@ -71,7 +71,7 @@ RSpec.describe "Api::V1::Users", type: :request do
     end
 
     context 'DELETE the user' do
-      let!(:user) { create :user_with_product }
+      let!(:user) { create :user, :user_with_product }
 
       it 'deletes the user' do
         expect do

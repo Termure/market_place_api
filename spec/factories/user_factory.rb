@@ -3,9 +3,12 @@ FactoryBot.define do
     email { Faker::Internet.email }
     password_digest { Faker::Internet.password }
 
-    factory :user_with_product do
-      after :create do |user|
-        create :product, user: user
+    trait :user_with_product do
+      transient do
+        val { false }
+      end
+      after :create do |user, evaluator|
+        create :product, published: evaluator.val, user: user
       end
     end
   end
