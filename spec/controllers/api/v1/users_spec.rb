@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Api::V1::Users", type: :request do
   describe "CRUD" do
-    let(:user) { create :user}
+    let(:user) { create :user }
 
     let!(:user_params) do
       {
@@ -71,7 +71,7 @@ RSpec.describe "Api::V1::Users", type: :request do
     end
 
     context 'DELETE the user' do
-      let!(:user) { user = create :user }
+      let!(:user) { create :user_with_product }
 
       it 'deletes the user' do
         expect do
@@ -85,6 +85,12 @@ RSpec.describe "Api::V1::Users", type: :request do
           delete api_v1_user_url(user)
           expect(response).to have_http_status(:forbidden)
         end.to change(User, :count).by(0)
+      end
+
+      it 'destroy user should destroy linked product' do
+        expect do
+          user.destroy
+        end.to change(Product, :count).by(-1)
       end
     end
   end
