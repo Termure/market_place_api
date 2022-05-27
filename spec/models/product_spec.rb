@@ -15,5 +15,7 @@ RSpec.describe Product, type: :model do
         expect(product.valid?).to eql true
       end
     end
+
+    it { is_expected.to validate_presence_of(product.title) }
   end
 end
