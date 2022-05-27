@@ -16,6 +16,7 @@ RSpec.describe Product, type: :model do
       end
     end
 
-    it { is_expected.to validate_presence_of(product.title) }
+    it { is_expected.to validate_presence_of(:title) }
+    it { is_expected.to validate_presence_of(:user_id) }
   end
 end
