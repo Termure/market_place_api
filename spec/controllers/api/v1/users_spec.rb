@@ -27,10 +27,10 @@ RSpec.describe "Api::V1::Users", type: :request do
         expect(json_response['email']).to eq(user.email)
       end
 
-      it 'returns the correct user' do
+      it 'does not returns the correct user' do
         get api_v1_user_url('fake_id')
         expect(response).to have_http_status(:not_found)
-        expect(response.body).to eq("Not found")
+        expect(response.body).to eq("User Not found")
       end
     end
 

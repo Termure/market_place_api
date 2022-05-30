@@ -43,7 +43,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def render_404
-    render json: 'Not found', status: :not_found
+    render json: 'User Not found', status: :not_found
   end
 
   def render_422
