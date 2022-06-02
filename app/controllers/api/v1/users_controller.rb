@@ -12,12 +12,12 @@ class Api::V1::UsersController < ApplicationController
   # POST /users/1
   def create
     @user = User.new(user_params)
-    render_201 if @user.save!
+    render_status(@user, :created) if @user.save!
   end
 
   def update
     if @user.update(user_params)
-      render_200
+      render_status(@user, :ok)
     else
       render_422
     end
@@ -50,11 +50,7 @@ class Api::V1::UsersController < ApplicationController
     render json: @user.errors, status: :unprocessable_entity
   end
 
-  def render_201
-    render json: @user, status: :created
-  end
-
-  def render_200
-    render json: @user, status: :ok
+  def render_status(user, status)
+    render json: user, status: status
   end
 end
