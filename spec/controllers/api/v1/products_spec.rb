@@ -53,5 +53,23 @@ RSpec.describe "Api::V1::Products", type: :request do
         end.to change(Product, :count).by(0)
       end
     end
+
+    context 'UPDATE products' do
+      let!(:product) { create :product }
+
+      it 'updates product' do
+        patch api_v1_product_url(product), params: product_params,
+              headers: { Authorization: JsonWebToken.encode(user_id: product.user_id) }
+        expect(response).to have_http_status(:success)
+        expect(Product.find(product.id).title).to eql(product_params[:product][:title])
+      end
+
+      it 'not updates the product' do
+        create :product
+        patch api_v1_product_url(product), params: product_params,
+              headers: { Authorization: JsonWebToken.encode(user_id: Product.last.user_id) }
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
   end
 end
