@@ -71,5 +71,23 @@ RSpec.describe "Api::V1::Products", type: :request do
         expect(response).to have_http_status(:forbidden)
       end
     end
+
+    context 'DELETE product' do
+      let!(:product) { create :product }
+
+      it 'deletes the product' do
+        expect do
+          delete api_v1_product_url(product), headers: { Authorization: JsonWebToken.encode(user_id: product.user_id) }
+          expect(response).to have_http_status(:no_content)
+        end.to change(Product, :count).by(-1)
+      end
+
+      it 'should not delete product' do
+        expect do
+          delete api_v1_product_url(product), headers: { Authorization: JsonWebToken.encode(user_id: product.user_id + 1) }
+          expect(response).to have_http_status(:forbidden)
+        end.to change(Product, :count).by(0)
+      end
+    end
   end
 end

@@ -1,8 +1,8 @@
 class Api::V1::ProductsController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :render_404
-  before_action :set_product, only: [:show, :update]
+  before_action :set_product, only: [:show, :update, :destroy]
   before_action :check_login, only: [:create]
-  before_action :check_owner, only: [:update]
+  before_action :check_owner, only: [:update, :destroy]
 
   def index
     render json: Product.all
@@ -27,6 +27,11 @@ class Api::V1::ProductsController < ApplicationController
     else
       render_422
     end
+  end
+
+  def destroy
+    @product.destroy
+    head :no_content
   end
 
   private
