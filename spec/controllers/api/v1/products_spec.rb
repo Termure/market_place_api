@@ -19,8 +19,9 @@ RSpec.describe "Api::V1::Products", type: :request do
       it 'returns the product' do
         get api_v1_product_url(product), as: :json
         expect(response).to have_http_status(:success)
-        json_response = JSON.parse(response.body)
+        json_response = JSON.parse(response.body, symbolize_manes: true)
         expect(json_response['data']['attributes']['title']).to eql(product.title)
+        expect(product.title).to eql (json_response.dig(:data, :relationship, :title))
       end
 
       it 'does not return the product' do
