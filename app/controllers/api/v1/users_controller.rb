@@ -6,7 +6,7 @@ class Api::V1::UsersController < ApplicationController
 
     # GET /users/1
   def show
-    render json: @user
+    render json: UserSerializer.new(@user).serializable_hash
   end
 
   # POST /users/1
@@ -51,6 +51,6 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def render_status(user, status)
-    render json: user, status: status
+    render json: UserSerializer.new(user).serializable_hash, status: status
   end
 end
