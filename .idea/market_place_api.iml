@@ -54,6 +54,7 @@
     <orderEntry type="library" scope="PROVIDED" name="factory_bot (v6.2.1, RVM: ruby-3.0.0 [market_place_api]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="factory_bot_rails (v6.2.0, RVM: ruby-3.0.0 [market_place_api]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="faker (v2.20.0, RVM: ruby-3.0.0 [market_place_api]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="fast_jsonapi (v1.5, RVM: ruby-3.0.0 [market_place_api]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ffi (v1.15.5, RVM: ruby-3.0.0 [market_place_api]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="globalid (v1.0.0, RVM: ruby-3.0.0 [market_place_api]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="i18n (v1.10.0, RVM: ruby-3.0.0 [market_place_api]) [gem]" level="application" />
@@ -138,6 +139,7 @@
         <option value="rspec:view" />
         <option value="scaffold" />
         <option value="scaffold_controller" />
+        <option value="serializer" />
         <option value="system_test" />
         <option value="task" />
         <option value="test_unit:channel" />
@@ -190,6 +192,7 @@
         <option value="rspec:view" />
         <option value="scaffold" />
         <option value="scaffold_controller" />
+        <option value="serializer" />
         <option value="system_test" />
         <option value="task" />
         <option value="test_unit:channel" />
@@ -388,8 +391,8 @@
           <RakeTaskImpl description="Run all specs in spec directory (excluding plugin specs)" fullCommand="spec" id="spec" />
           <RakeTaskImpl id="spec">
             <subtasks>
+              <RakeTaskImpl description="Run the code examples in spec/controllers" fullCommand="spec:controllers" id="controllers" />
               <RakeTaskImpl description="Run the code examples in spec/models" fullCommand="spec:models" id="models" />
-              <RakeTaskImpl description="Run the code examples in spec/requests" fullCommand="spec:requests" id="requests" />
               <RakeTaskImpl description="" fullCommand="spec:prepare" id="prepare" />
               <RakeTaskImpl description="" fullCommand="spec:statsetup" id="statsetup" />
             </subtasks>
