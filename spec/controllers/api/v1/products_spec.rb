@@ -20,7 +20,7 @@ RSpec.describe "Api::V1::Products", type: :request do
         get api_v1_product_url(product), as: :json
         expect(response).to have_http_status(:success)
         json_response = JSON.parse(response.body)
-        expect(json_response['title']).to eql(product.title)
+        expect(json_response['data']['attributes']['title']).to eql(product.title)
       end
 
       it 'does not return the product' do
@@ -43,7 +43,7 @@ RSpec.describe "Api::V1::Products", type: :request do
           expect(response).to have_http_status(:created)
         end.to change(Product, :count).by(1)
         json_response = JSON.parse(response.body)
-        expect(product.title).to eql(json_response['title'])
+        expect(product.title).to eql(json_response['data']['attributes']['title'])
       end
 
       it 'not creates the product' do
