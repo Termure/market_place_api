@@ -5,7 +5,8 @@ class Api::V1::ProductsController < ApplicationController
   before_action :check_owner, only: [:update, :destroy]
 
   def index
-    render json: Product.all
+    @products = Product.all
+    render json: ProductSerializer.new(@products).serializable_hash
   end
 
   def show
@@ -57,6 +58,7 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def render_status(product, status)
-    render json: product, status: status
+    options = { include: [:user]}
+    render json: ProductSerializer.new(product, options).serializable_hash, status: status
   end
 end
