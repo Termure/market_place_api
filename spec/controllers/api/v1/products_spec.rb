@@ -16,13 +16,14 @@ RSpec.describe "Api::V1::Products", type: :request do
     end
 
     context 'GET product' do
-      it 'returns the product', focus: true do
+      it 'returns the product', focus: true do # run rspec --tag focus spec
         get api_v1_product_url(product), as: :json
         expect(response).to have_http_status(:success)
         json_response = JSON.parse(response.body, symbolize_manes: true)
         expect(json_response['data']['attributes']['title']).to eql(product.title)
         expect(product.title).to eql (json_response.dig('data', 'attributes', 'title'))
         expect(product.user.id.to_s).to eql(json_response.dig('data', 'relationships', 'user', 'data', 'id'))
+        expect(product.user.email).to eql(json_response.dig('included', 0, 'attributes', 'email'))
       end
 
       it 'does not return the product' do

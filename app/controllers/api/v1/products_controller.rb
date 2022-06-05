@@ -58,6 +58,7 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def render_status(product, status)
-    render json: ProductSerializer.new(product).serializable_hash, status: status
+    options = { include: [:user]}
+    render json: ProductSerializer.new(product, options).serializable_hash, status: status
   end
 end
