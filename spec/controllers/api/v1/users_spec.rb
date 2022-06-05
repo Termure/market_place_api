@@ -24,7 +24,7 @@ RSpec.describe "Api::V1::Users", type: :request do
 
       it 'returns the correct user' do
         json_response = JSON.parse(response.body)
-        expect(json_response['email']).to eq(user.email)
+        expect(json_response['data']['attributes']['email']).to eq(user.email)
       end
 
       it 'does not returns the correct user' do
@@ -41,7 +41,7 @@ RSpec.describe "Api::V1::Users", type: :request do
         expect { create_user }.to change(User, :count).by(+1)
         expect(response).to have_http_status(:success)
         json_response = JSON.parse(response.body)
-        expect(json_response['id']).to eq(User.last.id)
+        expect(Integer(json_response['data']['id'])).to eq(User.last.id)
       end
 
       it 'does not creates user with taken email' do
