@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Api::V1::Users", type: :request do
   describe "CRUD" do
-    let(:user) { create :user }
+    let(:user) { create :user, :with_products }
 
     let!(:user_params) do
       {
@@ -23,8 +23,10 @@ RSpec.describe "Api::V1::Users", type: :request do
       end
 
       it 'returns the correct user' do
-        json_response = JSON.parse(response.body)
-        expect(json_response['data']['attributes']['email']).to eq(user.email)
+        json_response = JSON.parse(response.body, symbolize_names: true)
+        expect(user.email).to eql(json_response.dig(:data, :attributes, :email))
+        expect(user.products.first.id.to_s).to eql(json_response.dig(:data, :relationships, :products, :data, 0, :id))
+        expect(user.products.first.title).to eql(json_response.dig(:included, 0, :attributes, :title))
       end
 
       it 'does not returns the correct user' do
@@ -71,7 +73,7 @@ RSpec.describe "Api::V1::Users", type: :request do
     end
 
     context 'DELETE the user' do
-      let!(:user) { create :user, :user_with_product }
+      let!(:user) { create :user, :with_products }
 
       it 'deletes the user' do
         expect do

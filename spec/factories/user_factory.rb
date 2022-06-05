@@ -3,7 +3,7 @@ FactoryBot.define do
     email { Faker::Internet.email }
     password_digest { Faker::Internet.password }
 
-    trait :user_with_product do
+    trait :with_products do
       transient do
         val { false }
       end
