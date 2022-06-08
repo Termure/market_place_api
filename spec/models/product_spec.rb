@@ -45,5 +45,24 @@ RSpec.describe Product, type: :model do
       product_two.update(price: 33)
       expect(Product.recent.to_a).to match([product_one, product_three, product_two])
     end
+
+    it 'search not finds "videoGame" and "100" as min price' do
+      search_hash = { keyword: 'videGame', min_price: 100}
+      expect(Product.search(search_hash).empty?).to eql true
+    end
+
+    it 'search finds cheap TV' do
+      search_hash = { x: 'BBC 2', min_price: 50, max_price: 150}
+      expect(Product.search(search_hash)).to match([product_two])
+    end
+
+    it 'returns all products when no parameters' do
+      expect(Product.search({})).to match(Product.all.to_a)
+    end
+
+    it 'search filters by product ids' do
+      search_hash = { prod_ids: product_one }
+      expect(Product.search(search_hash)).to match([product_one])
+    end
   end
 end
