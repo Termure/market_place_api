@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Order, type: :model do
   describe 'order validations' do
-    let!(:order) { create :order }
+    let!(:order) { create :order, :with_products }
 
     it 'have a positive total' do
       order.total = -12
