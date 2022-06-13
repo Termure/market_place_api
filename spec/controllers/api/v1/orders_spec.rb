@@ -4,8 +4,17 @@ RSpec.describe "Api::V1::Orders", type: :request do
   describe "CRUD" do
     let!(:order) { create :order, :with_products }
 
+    let!(:order_params) do
+      {
+        order: {
+          product_ids: [order.products.last.id, order.products.first.id],
+          total: 50
+        }
+      }
+    end
+
     context 'GET order' do
-      it 'does not return the order to unlogged' do
+      it 'does not return the order for unlogged' do
         get api_v1_orders_url, as: :json
         expect(response).to have_http_status(:forbidden)
       end
@@ -24,6 +33,22 @@ RSpec.describe "Api::V1::Orders", type: :request do
         included_product_attr = json_response['included'][0]['attributes']
         expect(order.products.first.title).to eql(included_product_attr['title'])
       end
+    end
+
+    context 'POST order' do
+      it 'does not create the order for unlogged' do
+        post api_v1_orders_url, params: order_params, as: :json
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it 'creates the order with two products' do
+        expect do
+          post api_v1_orders_url, params: order_params,
+               headers: { Authorization: JsonWebToken.encode(user_id: order.user_id) }
+          expect(response).to have_http_status(:created)
+        end.to change(Order, :count).by(+1)
+      end
+
     end
   end
 end
