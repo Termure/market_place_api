@@ -4,6 +4,7 @@ FactoryBot.define do
     price { rand(0..2**32 - 1) }
     published { Faker::Boolean }
     user
+    quantity { rand(0..50) }
 
     before :create do
       create :user
