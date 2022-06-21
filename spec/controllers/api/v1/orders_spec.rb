@@ -4,11 +4,13 @@ RSpec.describe "Api::V1::Orders", type: :request do
   describe "CRUD" do
     let!(:order) { create :order, :with_products }
 
-    let!(:order_params) do
+    let(:order_params) do
       {
         order: {
-          product_ids: [order.products.last.id, order.products.first.id],
-          total: 50
+          product_ids_and_quantities: [
+            { product_id: FactoryBot.create(:product).id, quantity: 2},
+            { product_id: FactoryBot.create(:product).id, quantity: 3}
+          ]
         }
       }
     end
@@ -49,6 +51,14 @@ RSpec.describe "Api::V1::Orders", type: :request do
         end.to change(Order, :count).by(+1)
       end
 
+      it 'creates order with two products and placements' do
+        expect do
+          expect do
+            post api_v1_orders_url, params: order_params, as: :json,
+                 headers: { Authorization: JsonWebToken.encode(user_id: order.user_id)}
+          end.to change(Placement, :count).by(2)
+        end.to change(Order, :count).by(1)
+      end
     end
   end
 end
