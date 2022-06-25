@@ -10,8 +10,18 @@ RSpec.describe Order, type: :model do
     let!(:order) { create :order, :with_products }
 
     it 'sets the total' do
-      set_products_price(order, [10, 20, 30], 60)
-      expect(sum_products_price(order)).to eql(order.total)
+      pen  = create :product, price: 10
+      book = create :product, price: 20
+      pc   = create :product, price: 30
+
+      order.placements = [
+        Placement.new(product_id: pen.id,  quantity: 2),
+        Placement.new(product_id: book.id, quantity: 2),
+        Placement.new(product_id: pc.id,   quantity: 2)
+      ]
+      order.set_total!
+      expected_total = [pen.price * 2, book.price * 2, pc.price * 2].sum
+      expect(expected_total).to eql(order.total)
     end
 
     context 'build placements' do
