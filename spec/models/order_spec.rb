@@ -15,16 +15,25 @@ RSpec.describe Order, type: :model do
     end
 
     context 'build placements' do
-      let(:product_1) { create :product, quantity: 2}
-      let(:product_2) { create :product, quantity: 3}
+      let(:product_1) { create :product }
+      let(:product_2) { create :product }
       it 'builds 2 placements for the order' do
         expect do
           order.build_placements_with_product_ids_and_quantities([
-                                                                   { product_id: product_1.id},
-                                                                   { product_id: product_2.id}
+                                                                   { product_id: product_1.id, quantity: 2},
+                                                                   { product_id: product_2.id, quantity: 3}
                                                                  ])
           order.save
         end.to change(Placement, :count).by(2)
+      end
+    end
+
+    context 'an order should command not to much product than available' do
+      let(:product_3) { create :product }
+
+      it 'does not command to much product' do
+        order.placements << Placement.new(product_id: product_3.id, quantity: (3 + product_3.quantity))
+        expect(order.valid?).to eql false
       end
     end
   end
