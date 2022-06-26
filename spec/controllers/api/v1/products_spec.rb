@@ -1,5 +1,9 @@
 require 'rails_helper'
+require 'support/helpers'
 
+RSpec.configure do |c|
+  c.include Helpers
+end
 RSpec.describe "Api::V1::Products", type: :request do
   describe "CRUD" do
     let!(:product) { create :product }
@@ -35,10 +39,7 @@ RSpec.describe "Api::V1::Products", type: :request do
         get api_v1_products_url, as: :json
         expect(response).to have_http_status(:success)
         json_response = JSON.parse(response.body, symbolize_names: true)
-        expect(json_response.dig(:links, :first)).not_to be_nil
-        expect(json_response.dig(:links, :last)).not_to be_nil
-        expect(json_response.dig(:links, :prev)).not_to be_nil
-        expect(json_response.dig(:links, :next)).not_to be_nil
+        expect_json_response_is_paginated(json_response)
       end
     end
 

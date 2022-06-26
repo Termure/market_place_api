@@ -1,4 +1,9 @@
 require 'rails_helper'
+require 'support/helpers'
+
+RSpec.configure do |c|
+  c.include Helpers
+end
 
 RSpec.describe "Api::V1::Orders", type: :request do
   describe "CRUD" do
@@ -26,10 +31,7 @@ RSpec.describe "Api::V1::Orders", type: :request do
         expect(response).to have_http_status(:success)
         json_response = JSON.parse(response.body, symbolize_names: true)
         expect(order.user.orders.count).to eql(json_response[:data].count)
-        expect(json_response.dig(:links, :first)).to_not be_nil
-        expect(json_response.dig(:links, :last)).to_not be_nil
-        expect(json_response.dig(:links, :prev)).to_not be_nil
-        expect(json_response.dig(:links, :next)).to_not be_nil
+        expect_json_response_is_paginated(json_response)
       end
 
       it 'returns single order' do
