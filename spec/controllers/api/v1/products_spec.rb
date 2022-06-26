@@ -32,8 +32,13 @@ RSpec.describe "Api::V1::Products", type: :request do
       end
 
       it 'should show products' do
-        get api_v1_products_url()
+        get api_v1_products_url, as: :json
         expect(response).to have_http_status(:success)
+        json_response = JSON.parse(response.body, symbolize_names: true)
+        expect(json_response.dig(:links, :first)).not_to be_nil
+        expect(json_response.dig(:links, :last)).not_to be_nil
+        expect(json_response.dig(:links, :prev)).not_to be_nil
+        expect(json_response.dig(:links, :next)).not_to be_nil
       end
     end
 
