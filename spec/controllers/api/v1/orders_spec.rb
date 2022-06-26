@@ -24,8 +24,12 @@ RSpec.describe "Api::V1::Orders", type: :request do
       it 'returns the orders' do
         get api_v1_orders_url, headers: { Authorization: JsonWebToken.encode(user_id: order.user_id) }
         expect(response).to have_http_status(:success)
-        json_response = JSON.parse(response.body)
-        expect(order.user.orders.count).to eql(json_response['data'].count)
+        json_response = JSON.parse(response.body, symbolize_names: true)
+        expect(order.user.orders.count).to eql(json_response[:data].count)
+        expect(json_response.dig(:links, :first)).to_not be_nil
+        expect(json_response.dig(:links, :last)).to_not be_nil
+        expect(json_response.dig(:links, :prev)).to_not be_nil
+        expect(json_response.dig(:links, :next)).to_not be_nil
       end
 
       it 'returns single order' do
