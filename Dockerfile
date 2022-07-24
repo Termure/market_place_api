@@ -1,33 +1,20 @@
 # Dockerfile
 FROM ruby:3.0.0
 
-# Add yarn from repository
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+LABEL maintainer="ioan.termure24@gmail.com"
 
-#Install required package
-RUN apt-get update -qq \
-&& apt-get install -y \
-apt-utils \
-nodejs \
-yarn \
-nano
+RUN apt-get update -yqq && apt-get install -yqq --no-install-recommends \
+    nodejs
 
-#Create directory docker-rails
-RUN mkdir /docker-rails
+COPY Gemfile* /usr/src/app/
+WORKDIR /usr/src/app
 
-# Change directory to docker-rails
-WORKDIR /docker-rails
+ENV BUNDLE_PATH /gems
 
-# Copy created Gemfile & Gemfile.lock to docker container
-COPY Gemfile /docker-rails/Gemfile
-COPY Gemfile.lock /docker-rails/Gemfile.lock
-
-# Install dependencies
 RUN bundle install
 
-COPY . /docker-rails
+COPY . /usr/src/app/
 
-EXPOSE 3000 3035
+CMD ["bin/rails", "s", "-b", "0.0.0.0"]
 
-CMD ["rails", "server", "-b", "0.0.0.0"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
